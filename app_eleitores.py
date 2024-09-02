@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
-import plotly.express as px
 
 # Carregando Dados Utilizados
 
@@ -255,20 +254,17 @@ dados_agrupados = rae_24.groupby(['DT_GERACAO_MES',
                                   'DS_GENERO',
                                   'DS_ESTADO_CIVIL',
                                   'DS_FAIXA_ETARIA',
-                                  'DS_GRAU_ESCOLARIDADE', 'DS_TIPO_OPERACAO'], observed=True, as_index=False).agg(count=('QT_RAE', 'size'))
+                                  'DS_GRAU_ESCOLARIDADE', 'DS_TIPO_OPERACAO'], observed=True, as_index=False).agg(sum=('QT_RAE', 'size'))
 
 # Criando o layout
 
 st.set_page_config(page_title="Análise de Dados Eleitorais", layout='wide')
 
 st.title('Dados Eleitorais - Eleitores - 2024')
-st.text("""
-        Esse relatório foi feito com o intuito de demonstrar \
-        habilidades analíticas do autor e suas habilidades técnicas \
-         a respeito dos dados eleitoriais municipais de 2024
-        """)
+st.subheader("""Tem curisiodade para saber as características principais dos eleitores brasileiros? Ao lado tem filtros para você saber os valores mais frequentes relacionados a sua cidade ou estado.""")
 
-col1, col2 = st.columns(2)
+
+container_oculto = st.container()
 
 
 def filtrar_opcoes(df, filtro_mes=None, filtro_uf=None):
@@ -293,7 +289,7 @@ with st.sidebar:
     col3, col4 = st.columns(2, gap='small')
     with col3:
         if st.button('Filtrar', type='primary', use_container_width=True):
-            with col1:
+            with container_oculto:
                 if mes:
                     data_filtrada = dados_agrupados[dados_agrupados['DT_GERACAO_MES'] == mes]
                 if uf:
@@ -312,24 +308,55 @@ with st.sidebar:
                 })
 
                 st.session_state.data_filtrada = tabela
-                with col2:
-                    st.session_state.fig_bar = st.bar_chart(data_filtrada,
-                                                            x='DS_TIPO_OPERACAO', y='count', color='DS_TIPO_OPERACAO')
+
+                data_agrupada = data_filtrada.groupby(
+                    'DS_TIPO_OPERACAO', as_index=False).agg({'sum': 'sum'})
+                data_agrupada = data_agrupada.rename(columns={'sum': 'Total'})
+                st.session_state.titulo_bar = st.title(
+                    'Total de Registros Por Operação Filtrados')
+                st.session_state.fig_bar = st.bar_chart(data_agrupada,
+                                                        x='DS_TIPO_OPERACAO',
+                                                        y='Total',
+                                                        color='DS_TIPO_OPERACAO',
+                                                        use_container_width=True)
     with col4:
         if st.button('Limpar'):
             st.session_state.data_filtrada = None
             st.session_state.fig_bar = None
-with col1:
+            st.session_state.titulo_bar = None
+
+# st.markdown(
+#     """
+#     <style>
+#     .container {
+#         display: flex;
+#         flex-direction: column;
+#         align-items: center;
+#         justify-content: center;
+#     }
+#     .container > div {
+#         margin: 10px;
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )
+
+
+with container_oculto:
+
     if 'data_filtrada' not in st.session_state:
         st.session_state.data_filtrada = None
+    if st.session_state.data_filtrada is not None:
+        st.dataframe(st.session_state.data_filtrada,
+                     use_container_width=True)
+    else:
+        st.caption("Escolha os filtros de Mês, Estado e Cidade no Menu ao Lado.")
 
-    st.session_state.data_filtrada = st.session_state.data_filtrada
-    st.dataframe(st.session_state.data_filtrada, use_container_width=True)
-
-
-with col2:
-    if 'fig_bar' not in st.session_state:
+    if 'fig_bar' not in st.session_state and 'titulo_bar' not in st.session_state:
         st.session_state.fig_bar = None
+        st.session_state.titulo_bar = None
+    st.session_state.titulo_bar = st.session_state.titulo_bar
     st.session_state.fig_bar = st.session_state.fig_bar
 
 
