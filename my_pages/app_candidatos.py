@@ -103,7 +103,7 @@ def app_candidatos():
               fontdict={'fontsize': 20})
     plt.xlabel('Gênero', fontdict={'fontsize': 20})
     plt.ylabel('Contagem', fontdict={'fontsize': 20})
-    st.markdown('Iniciamos com o gráfico demonstrando a diferenças entre 2020 e 2024 sobre a quantidade de candidatos pelo gênero. É possível notar que temos reduções de registros em ambos os gêneros. Contudo, ainda temos um número superior de homens em relação às mulheres em ambos os anos de eleições municipais. Em 2020 alguns candidatos colocaram a opção não divulgável, o que podemos supor que pode ser apenas por esquecimento na hora do registro ou porquê o candidato não se identificava com nenhum dos gêneros, mas em 2024 (ano dessa análise) isso não ocorreu.')
+    st.markdown('Iniciamos com o gráfico demonstrando a diferenças entre 2020 e 2024 sobre a quantidade de candidatos pelo gênero. É possível notar que temos reduções de registros em ambos os gêneros. Contudo, ainda temos um número superior de homens em relação às mulheres em ambos os anos de eleições municipais. Em 2020 alguns candidatos colocaram a opção não divulgável, o que podemos supor que pode ser apenas por esquecimento na hora do registro ou porque o candidato não se identificava com nenhum dos gêneros ou porque não diz divulgar literalmente, mas em 2024 (ano dessa análise) isso não ocorreu.')
     st.pyplot(fig=fig_bar, use_container_width=True)
 
     # GRÁFICO DE BARRAS HORIZONTAL MOSTRANDO A QUANTIDADE DE REGISTROS POR RAÇA
@@ -126,7 +126,7 @@ def app_candidatos():
         ax[1].margins(x=0.3)
 
     fig_barh.suptitle('Contagem de Raças entre 2020 e 2024', fontsize=20)
-    st.markdown('Continuando a análise, seguimos verificando quais são as raças mais frequentes nos dados de 2020 e 2024. Segundo a matéria temos em 2024 diz que 53% dos candidatos se identificavam como negro ou pardo, mas como podemos ver no gráfico podemos ver que a maior quantidade de registros de raça são de candidatos que se identificam como Branco. ')
+    st.markdown('Continuando a análise, seguimos verificando quais são as raças mais frequentes nos dados de 2020 e 2024. Segundo a matéria em 2024, 53% dos candidatos se identificavam como negro ou pardo, mas como podemos ver no gráfico, a maior quantidade de registros de raça são de candidatos que se identificam como Branco. ')
     st.pyplot(fig=fig_barh, use_container_width=True)
 
     # GRÁFICO DE NUVENS DE PALAVRAS PARA VERIFICAR A FREQUENCIA DE ESTADO CIVIL
@@ -156,7 +156,7 @@ def app_candidatos():
     fig_cloud.suptitle(
         'Nuvem de palavras - Estado Civil (2020 - 2024)', fontsize=20)
     st.markdown(
-        'De acordo com a matéria do G1, o que tivemos mais frequência de pessoas casadas e tanto em 2020 e 2024 e as informações estão coerente.')
+        'De acordo com a matéria do G1, o que tivemos de mais frequente são pessoas casadas. Tanto em 2020 e 2024 e as informações estão coerentes.')
     st.pyplot(fig=fig_cloud, use_container_width=True)
 
     # GRÁFICO DE BARRAS SOBRE A OCUPAÇÃO DOS CANDIDATOS - RANK
@@ -183,14 +183,16 @@ def app_candidatos():
     for container in ax[1].containers:
         ax[1].bar_label(container, labels=ranks)
 
+    ax[0].set_xticks(range(len(ax[0].get_xticklabels())))
     ax[0].set_xticklabels(ax[0].get_xticklabels(), rotation=45)
+    ax[1].set_xticks(range(len(ax[1].get_xticklabels())))
     ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=45)
 
     plt.margins(y=0.05)
 
     fig_rank.suptitle(
         'Profissões mais frequentes entre 2020 e 2024', fontsize=20)
-    st.markdown('Nesse momento da análise, foi notado uma diferença de resultados relacionados a esse recorte. Na matéria do G1, foi abordado que a ocupação mais frequente entre os candidatos era empresário. Contudo, como pode ser observado no gráfico de rank, que a ocupação mais frequente é designada como "OUTROS", o que leva a pensar como questionamento porque a matéria designou "OUTRO" como empresários. Talvez possa ter considerado candidatos que tenham como ocupação um trabalho no modelo de pessoa júridica. Outra tópico importante a ser analisado é que em 2024 temos como o 5° lugar vereadores, o que indica que muitas pessoas esse ano estão tentando reeleição.')
+    st.markdown('Nesse momento da análise, foi notado uma diferença de resultados relacionados a esse recorte abaixo. Na matéria do G1, foi abordado que a ocupação mais frequente entre os candidatos era empresário. Contudo, como pode ser observado no gráfico de ranking, a ocupação mais frequente é designada como "OUTROS", o que leva a pensar como questionamento porque a matéria designou "OUTRO" como empresários. Talvez possa ter considerado candidatos que tenham como ocupação um trabalho no modelo de pessoa júridica. Outra tópico importante a ser analisado é que em 2024 temos como 3° lugar servidores públicos municipais pelos dois períodos eleitorais consecutivos, podendo ser feito um mapeamento dessas funções, e como o 5° lugar vereadores, o que indica que muitas pessoas esse ano estão tentando reeleição.')
     st.pyplot(fig=fig_rank, use_container_width=True)
 
     # GRÁFICO DE BARRAS - FAIXA ETÁRIA
@@ -213,10 +215,11 @@ def app_candidatos():
     for container in ax[1].containers:
         ax[1].bar_label(container)
         ax[1].margins(x=0, y=0.2)
+        ax[1].set_xticks(range(len(ax[1].get_xticklabels())))
         ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=45)
     fig_idade.suptitle(
         'Faixas Etárias mais frequentes entre 2020 e 2024', fontsize=20)
-    st.markdown('Continuando a checagem, em 2020 temos mais candidatos dentro da faixa etária de "40 a 44 anos" dando espaço em 2024 para a faixa etária de "45 a 49 anos". Na matéria foi feita uma média entre as duas idades do intervalo dizendo que seria 46 anos, redondando para baixo, pois calculando entre as duas temos 47 anos. Pode parecer simples, mas dizer 46 anos seria a mais frequente sugere que a equipe do G1 envolvida nessa matéria teve acesso às idades e pode fazer uma mediana dos dados. Pois, os dados obtidos para essa análise no site do TSE não mostram os dados de idades como números inteiros, mas só a título de curiosidade.')
+    st.markdown('Continuando a checagem, em 2020 temos mais candidatos dentro da faixa etária de "40 a 44 anos" dando espaço em 2024 para a faixa etária de "45 a 49 anos". Na matéria foi feita uma média entre as duas idades do intervalo dizendo que seria 46 anos, redondando para baixo, pois calculando entre as duas temos 47 anos. Pode parecer simples, mas dizer 46 anos como mais frequente sugere que a equipe do G1 envolvida nessa matéria teve acesso às idades dos candidatos e pôde fazer uma mediana dos dados, pois, os dados obtidos para essa análise no site do TSE não mostram os dados de idades como números inteiros, mas como categorias. Só a título de curiosidade.')
     st.pyplot(fig=fig_idade, use_container_width=True)
 
     # GRÁFICO DE DISPERSÃO DOS DADOS SOBRE ESCOLARIDADE
@@ -231,7 +234,9 @@ def app_candidatos():
                     y=formacao.loc['2024']['count'].values,
                     size=formacao.loc['2024']['count'].values,
                     ax=ax[1], sizes=(50, 500), legend='brief')
+    ax[0].set_xticks(range(len(ax[0].get_xticklabels())))
     ax[0].set_xticklabels(ax[0].get_xticklabels(), rotation=45)
+    ax[1].set_xticks(range(len(ax[1].get_xticklabels())))
     ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=45)
 
     ax[0].set_xlabel('Grau de Instrução', fontsize=14)
