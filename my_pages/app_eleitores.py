@@ -370,6 +370,3 @@ def app_eleitores():
                       icon=folium.Icon(icon="glyphicon glyphicon-tasks", prefix="glyphicon")).add_to(mapa_ufs)
     st.header('Distribuição Geográfica dos Eleitores Ao Redor do Mundo')
     st_folium(mapa_ufs, height=500, width=1920)
-
-
-app_eleitores()
