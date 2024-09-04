@@ -35,7 +35,7 @@ col1, col2 = st.columns(2, gap='small')
 with col1:
 
     create_icon_link("images/github-mark-white.svg",
-                     "https://github.com/streamlit", "GitHub", "Você vai ver os últimos projetos que tenho trabalhado para construir minha carreira na tecnologia.")
+                     "https://github.com/yurilimadev", "GitHub", "Você vai ver os últimos projetos que tenho trabalhado para construir minha carreira na tecnologia.")
     create_icon_link("images/instagram-round-white.svg",
                      "https://streamlit.io/newsletter", "Instagram", "Você pode ver minha rotina e o que venho aprendendo na faculdade e aplicando nos stories.")
 
