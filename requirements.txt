@@ -3,7 +3,6 @@ appdirs==1.4.4
 atomicwrites==1.4.0
 botocore==1.31.64
 branca==0.7.2
-clyent==1.2.1
 dash==2.17.1
 dash-core-components==2.0.0
 dash-html-components==2.0.0
