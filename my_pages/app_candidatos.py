@@ -111,11 +111,19 @@ def app_candidatos():
 
     cor_raca = candidatos_20_24.groupby(
         ['Ano de eleição', 'Cor/raça'], observed=False).agg(count=('Cor/raça', 'size'))
+    custom_palette_20 = ["#3498db", "#9b59b6", "#2ecc71",
+                         "#e74c3c", "#f1c40f", "#9b59b6", "#9b59b6"]
+    custom_palette_24 = ["#3498db", "#9b59b6",
+                         "#e74c3c", "#f1c40f", "#9b59b6", "#9b59b6"]
 
     sns.barplot(y=cor_raca.loc['2020'].index,
-                x=cor_raca.loc['2020']['count'], orient='h', ax=ax[0])
+                x=cor_raca.loc['2020']['count'],
+                ax=ax[0],
+                palette=custom_palette_20, hue=cor_raca.loc['2020'].index)
     sns.barplot(y=cor_raca.loc['2024'].index,
-                x=cor_raca.loc['2024']['count'], orient='h', ax=ax[1])
+                x=cor_raca.loc['2024']['count'],
+                ax=ax[1],
+                palette=custom_palette_24, hue=cor_raca.loc['2024'].index)
 
     for container in ax[0].containers:
         ax[0].bar_label(container)
@@ -168,20 +176,28 @@ def app_candidatos():
         ascending=False).sort_values()
     fig_rank, ax = plt.subplots(1, 2, figsize=(20, 6))
 
-    ranks = [1, 2, 3, 4, 5]
     cores_2020 = ['gold' if i == 0 else 'grey' for i in range(5)]
     cores_2024 = ['gold' if i == 0 else 'grey' for i in range(5)]
 
     sns.barplot(x=ocupacao_2020.iloc[:5].index.to_list(
-    ), y=ocupacao_2020.values[:5][::-1], ax=ax[0], palette=cores_2020)
+    ), y=ocupacao_2020.values[:5][::-1], ax=ax[0], palette=cores_2020, hue=ocupacao_2020.iloc[:5].index.to_list(
+    ))
     sns.barplot(x=ocupacao_2024.iloc[:5].index.to_list(
-    ), y=ocupacao_2024.values[:5][::-1], ax=ax[1], palette=cores_2024)
+    ), y=ocupacao_2024.values[:5][::-1], ax=ax[1], palette=cores_2024, hue=ocupacao_2024.iloc[:5].index.to_list(
+    ))
 
-    for container in ax[0].containers:
-        ax[0].bar_label(container, labels=ranks)
+    ranks = [1, 2, 3, 4, 5]
 
-    for container in ax[1].containers:
-        ax[1].bar_label(container, labels=ranks)
+    ax[0].bar_label(ax[0].containers[0], labels=[1])
+    ax[0].bar_label(ax[0].containers[1], labels=[2])
+    ax[0].bar_label(ax[0].containers[2], labels=[3])
+    ax[0].bar_label(ax[0].containers[3], labels=[4])
+    ax[0].bar_label(ax[0].containers[4], labels=[5])
+    ax[1].bar_label(ax[1].containers[0], labels=[1])
+    ax[1].bar_label(ax[0].containers[1], labels=[2])
+    ax[1].bar_label(ax[0].containers[2], labels=[3])
+    ax[1].bar_label(ax[0].containers[3], labels=[4])
+    ax[1].bar_label(ax[0].containers[4], labels=[5])
 
     ax[0].set_xticks(range(len(ax[0].get_xticklabels())))
     ax[0].set_xticklabels(ax[0].get_xticklabels(), rotation=45)
@@ -203,9 +219,13 @@ def app_candidatos():
     fig_idade, ax = plt.subplots(2, 1, figsize=(20, 10))
 
     sns.barplot(x=faixa_etaria.loc['2020']['count'].index,
-                y=faixa_etaria.loc['2020']['count'].values, ax=ax[0], orient='v')
+                y=faixa_etaria.loc['2020']['count'].values,
+                ax=ax[0],
+                orient='v')
     sns.barplot(x=faixa_etaria.loc['2024']['count'].index,
-                y=faixa_etaria.loc['2024']['count'].values, ax=ax[1], orient='v')
+                y=faixa_etaria.loc['2024']['count'].values,
+                ax=ax[1],
+                orient='v')
 
     for container in ax[0].containers:
         ax[0].bar_label(container)
@@ -253,26 +273,34 @@ def app_candidatos():
 
     handles, labels = ax[0].get_legend_handles_labels()
     ax[0].legend(handles, labels, title="Tamanho das Bolhas",
-                 bbox_to_anchor=(1.05, 1), loc='upper left')
+                 bbox_to_anchor=(1.05, 1), loc='upper left', labelspacing=1.5)
     ax[1].legend(handles, labels, title="Tamanho das Bolhas",
-                 bbox_to_anchor=(1.05, 1), loc='upper left')
+                 bbox_to_anchor=(1.05, 1), loc='upper left', labelspacing=1.5)
 
     fig_scatter.tight_layout()
     st.markdown('Quanto a escolaridade dos candidatos, realmente temos mais registros para "ENSINO MÉDIO COMPLETO" em ambos os anos confirmando os dados dispostos na matéria. Um dado interessante a ser analisado é que o número de pessoas com ensino superior completo teve um aumento, demonstrando uma possível preocupação dos candidatos com aprimoramento técnico.(esperemos)')
     st.pyplot(fig=fig_scatter, use_container_width=True)
 
     # GRÁFICO DE BARRAS - DIFERENÇA DE REGISTROS POR SIGLA
-    fig_siglas = plt.figure(figsize=(20, 8))
+    fig_siglas = plt.figure(figsize=(20, 10))
     contagem_siglas = candidatos_20_24.groupby(
         ['Ano de eleição', 'Sigla partido'], observed=False).agg(count=('Sigla partido', 'size'))
     contagem_siglas_2020 = contagem_siglas.loc[('2020')]
     contagem_siglas_2024 = contagem_siglas.loc[('2024')]
-    diferencas = contagem_siglas_2024 - contagem_siglas_2020
-    sns.barplot(x=diferencas['count'], y=diferencas.index)
+    contagem_siglas_2020.columns = ['2020']
+    contagem_siglas_2024.columns = ['2024']
+    diferenca = pd.concat(
+        [contagem_siglas_2024, contagem_siglas_2020], axis=1).fillna(0)
+    diferenca['diff'] = diferenca['2024'] - diferenca['2020']
+    sns.barplot(x=diferenca['diff'],
+                y=diferenca.index,
+                orient='h',
+                palette='viridis',
+                hue=diferenca.index)
+
     plt.xlabel('Contagem da Diferença', fontsize=14)
     plt.ylabel('Partidos Políticos', fontsize=14)
     plt.title('Diferença de Entradas entre 2020 a 2024', fontsize=20)
-    plt.margins(y=0.05)
 
     st.markdown('Para tornar um pouco mais rica a análise desse relatório, foi produzido esse gráfico mostrando a diferença de registro entre os anos de 2020 e 2024 para as principais siglas de partidos polítcos do pais. Pode ser observado que as siglas que mais tiveram entradas, respectivamente foi SOLIDARIEDADE, PP e PL.')
     st.pyplot(fig=fig_siglas, use_container_width=True)
